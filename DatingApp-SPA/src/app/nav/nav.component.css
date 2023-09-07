@@ -1,5 +1,12 @@
-a.dropdown-toggle {
+a.dropdown-toggle , .dropdown-item{
+    cursor: pointer;
     border: none;
     outline: none;
     text-decoration: none;
- }
+ } 
+ .dropdown-menu-right {
+    right: 0 !important;
+    left: auto !important;
+     
+}
+.dropdown-menu{}

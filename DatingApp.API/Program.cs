@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.Net;
+using Microsoft.AspNetCore.Diagnostics;
+using DatingApp.API.Helpers;
 
 internal class Program
 {
@@ -47,8 +50,25 @@ internal class Program
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
+            app.UseDeveloperExceptionPage();
             app.UseSwagger();
             app.UseSwaggerUI();
+        }
+        else
+        {
+            app.UseExceptionHandler(builder => {
+                builder.Run(async context => {
+                    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+                    var error = context.Features.Get<IExceptionHandlerFeature>();
+
+                    if (error != null)
+                    {
+                        context.Response.AddApplicationError(error.Error.Message);  
+                        await context.Response.WriteAsync(error.Error.Message);
+                    }
+                });
+            });
         }
         app.UseCors(MyAllowSpecificOrigins);
         app.UseAuthentication();
