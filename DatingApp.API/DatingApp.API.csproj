@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <UserSecretsId>79a3edd0-2092-40a2-a04d-dcb46d5ca9ed</UserSecretsId>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
@@ -12,5 +12,6 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.9"/>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.9"/>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.9"/>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1"/>
   </ItemGroup>
 </Project>

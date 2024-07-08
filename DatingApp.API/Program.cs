@@ -6,11 +6,13 @@ using System.Text;
 using System.Net;
 using Microsoft.AspNetCore.Diagnostics;
 using DatingApp.API.Helpers;
+using Microsoft.AspNetCore.Mvc;
 
 internal class Program
 {
     private static void Main(string[] args)
     {
+
 
         var  MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
@@ -27,7 +29,14 @@ internal class Program
         
 
         // Add services to the container.
+        builder.Services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+            .AddJsonOptions(opt => {
+                opt.JsonSerializerOptions.ReferenceHandler = 
+                    System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+            });
+        builder.Services.AddAutoMapper(typeof(DatingRepository).Assembly);
         builder.Services.AddScoped<IAuthRepository, AuthRepository>();
+        builder.Services.AddScoped<IDatingRepository, DatingRepository>();
         builder.Services.AddControllers();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
@@ -46,6 +55,22 @@ internal class Program
             });
 
         var app = builder.Build();
+        using (var scope = app.Services.CreateScope())
+        {
+            var services = scope.ServiceProvider;
+            try {
+                var context = services.GetRequiredService<DataContext>();
+                context.Database.Migrate();
+                Console.WriteLine("hey!");
+                Seed.SeedUsers(context);
+            }
+            catch(Exception ex)
+            {
+                var logger = services.GetRequiredService<ILogger<Program>>();
+                logger.LogError(ex, "Error occured");
+            }
+        }
+        
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
